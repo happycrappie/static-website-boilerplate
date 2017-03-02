@@ -28,7 +28,8 @@ var build = {
   js: 'build/js/',
   css: 'build/css/',
   mail: 'build/mail/',
-  assets: 'build/_assets/'
+  fonts: 'build/fonts',
+  assets: 'build/_assets/',
 };
 
 // View Task
