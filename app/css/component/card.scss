@@ -1,3 +1,19 @@
-h1 {
-  color: green;
+$purple: #6200EA;
+
+.card {
+  display: flex;
+
+  margin: 2rem;
+  padding: 2rem;
+
+  border-radius: 7px;
+  box-shadow: 0 8px 18px rgba(0,0,0,.2);
+
+  &.purple {
+    background-color: $purple;
+
+    p {
+      color: white;
+    }
+  }
 }

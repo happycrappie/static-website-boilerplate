@@ -1,0 +1,33 @@
+// Variables
+$darkgray: #222;
+$gray: #777;
+
+
+h1,
+h2,
+p {
+  font-family: 'Heebo', 'Open Sans', Arial, sans-serif;
+  line-height: 1;
+  margin: 0;
+}
+
+h1 {
+  font-size: 26pt;
+  font-weight: bold;
+  color: $darkgray;
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: 16pt;
+  font-weight: lighter;
+  color: $gray;
+  line-height: 1.2;
+}
+
+p {
+  font-size: 12pt;
+  font-weight: normal;
+  color: $darkgray;
+  line-height: 1.5;
+}

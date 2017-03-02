@@ -1,6 +1,13 @@
 @import '_imports';
 
+// Variables
+$lightgray: #f1f1f1;
+
 body {
-  background-color: black;
-  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  background-color: $lightgray;
 }
