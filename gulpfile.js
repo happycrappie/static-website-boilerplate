@@ -75,7 +75,7 @@ gulp.task('mail', function() {
 // Font Assets
 gulp.task('fontAssets', function() {
   return gulp.src(app.assets + 'fonts/*')
-    .pipe(gulp.dest(build.src))
+    .pipe(gulp.dest(build.fonts))
 })
 
 // CSS Assets
