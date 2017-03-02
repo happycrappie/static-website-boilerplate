@@ -55,8 +55,8 @@ root
     |  |__ scripts.js
     |
     |_ views
-    |  |_ _layouts
-    |  |  |__ head.pug
-    |  |
-    |  |__ index.pug
+       |_ _layouts
+       |  |__ head.pug
+       |
+       |__ index.pug
 ```
