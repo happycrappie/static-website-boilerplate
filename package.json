@@ -1,7 +1,7 @@
 {
   "name": "static-website-boilerplate",
   "version": "1.0.0",
-  "description": "",
+  "description": "A faster way to develop static websites.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/happycrappie/static-website-boilerplate.git"
   },
-  "author": "",
+  "author": "eryc",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/happycrappie/static-website-boilerplate/issues"
