@@ -9,27 +9,32 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     uglify = require('gulp-uglify'),
     plumber = require('gulp-plumber'),
+    imagemin = require('gulp-imagemin'),
     cleanCSS = require('gulp-clean-css'),
+    prefix = require('gulp-autoprefixer'),
     concatCSS = require('gulp-concat-css');
 
 // BrowserSync Reload
 var reload = bs.reload;
 
 // My Paths
+var appRoot = './app/',
+    buildRoot = './build/';
+
 var app = {
-  js: 'app/js/',
-  css: 'app/css/',
-  mail: 'app/_mail/',
-  views: 'app/views/',
-  assets: 'app/_assets/'
+  js: appRoot + 'js/',
+  css: appRoot + 'css/',
+  mail: appRoot + '_mail/',
+  views: appRoot + 'views/',
+  assets: appRoot + '_assets/'
 };
 var build = {
-  src: 'build/',
-  js: 'build/js/',
-  css: 'build/css/',
-  mail: 'build/mail/',
-  fonts: 'build/fonts',
-  assets: 'build/_assets/',
+  js: buildRoot + 'js/',
+  css: buildRoot + 'css/',
+  img: buildRoot + 'img/',
+  mail: buildRoot + 'mail/',
+  fonts: buildRoot + 'fonts',
+  assets: buildRoot + '_assets/',
 };
 
 // View Task
@@ -39,16 +44,17 @@ gulp.task('views', function() {
     .pipe(pug({
       pretty: true
     }))
-    .pipe(gulp.dest(build.src))
+    .pipe(gulp.dest(buildRoot))
 });
 
 // Sass Task
 gulp.task('sass', function() {
   return gulp.src(app.css + 'style.scss')
     .pipe(plumber())
-    .pipe(sass({
+    .pipe(sass.sync({
       outputStyle: 'compressed'
     }))
+    .pipe(prefix({ browsers: ['last 4 versions'] }))
     .pipe(gulp.dest(build.css))
     .pipe(reload({
       stream: true
@@ -96,14 +102,26 @@ gulp.task('jsAssets', function(cb) {
     cb
   );
 });
+// IMG Assets
+gulp.task('images', function(){
+  return gulp.src(app.assets + 'img/**/*')
+    .pipe(imagemin([
+      imagemin.gifsicle({interlaced: true}),
+      imagemin.jpegtran({progressive: true}),
+      imagemin.optipng({optimizationLevel: 5}),
+      imagemin.svgo({plugins: [{removeViewBox: true}]})
+    ]))
+    .pipe(gulp.dest(build.img))
+    .pipe(reload({ stream: true}));
+});
 
 
 // Watchers
 gulp.task('watch_views', ['views'], reload);
 
 // Default task
-gulp.task('default', ['views', 'sass', 'uglify', 'mail', 'cssAssets', 'jsAssets', 'fontAssets'], function(){
-  bs({server: build.src});
+gulp.task('default', ['views', 'sass', 'uglify', 'mail', 'cssAssets', 'jsAssets', 'fontAssets', 'images'], function(){
+  bs({server: buildRoot});
 
   // Gulp watches
   gulp.watch(app.views + '**/*.pug', ['watch_views']);
@@ -113,4 +131,5 @@ gulp.task('default', ['views', 'sass', 'uglify', 'mail', 'cssAssets', 'jsAssets'
   gulp.watch(app.assets + '**/*.css', ['cssAssets']);
   gulp.watch(app.assets + '**/*.js', ['jsAssets']);
   gulp.watch(app.assets + 'fonts/*', ['fontAssets']);
+  gulp.watch(app.assets + 'img/**/**', ['images']);
 });
