@@ -11,6 +11,12 @@ git clone https://github.com/happycrappie/static-website-boilerplate.git
 
 **Install dependencies**
 ```
+yarn
+```
+
+or
+
+```
 npm install
 ```
 
