@@ -1,16 +1,18 @@
 {
   "name": "static-website-boilerplate",
-  "version": "1.0.0",
+  "version": "2.0",
   "description": "A faster way to develop static websites.",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start": "node app",
+    "gulp": "gulp clean && gulp",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/happycrappie/static-website-boilerplate.git"
   },
-  "author": "eryc",
+  "author": "eryc silva",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/happycrappie/static-website-boilerplate/issues"

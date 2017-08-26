@@ -1,4 +1,4 @@
-'use strict';
+'use scrict';
 
 // Requires
 var gulp = require('gulp'),
@@ -6,26 +6,29 @@ var gulp = require('gulp'),
     pug = require('gulp-pug'),
     sass = require('gulp-sass'),
     bs = require('browser-sync'),
+    babel = require('gulp-babel'),
+    clean = require('gulp-clean'),
     concat = require('gulp-concat'),
-    uglify = require('gulp-uglify'),
     plumber = require('gulp-plumber'),
     imagemin = require('gulp-imagemin'),
     cleanCSS = require('gulp-clean-css'),
     prefix = require('gulp-autoprefixer'),
-    concatCSS = require('gulp-concat-css');
+    concatCSS = require('gulp-concat-css'),
+    sourcemaps = require('gulp-sourcemaps');
 
-// BrowserSync Reload
+// BrowserSynce Reload
 var reload = bs.reload;
 
 // My Paths
 var appRoot = './app/',
-    buildRoot = './build/';
+    buildRoot = './public/';
 
 var app = {
   js: appRoot + 'js/',
   css: appRoot + 'css/',
   mail: appRoot + '_mail/',
   views: appRoot + 'views/',
+  posts: appRoot + 'posts/',
   assets: appRoot + '_assets/'
 };
 var build = {
@@ -34,8 +37,11 @@ var build = {
   img: buildRoot + 'img/',
   mail: buildRoot + 'mail/',
   fonts: buildRoot + 'fonts',
+  posts: buildRoot + 'posts/',
   assets: buildRoot + '_assets/',
 };
+
+// ------- Tasks ------- //
 
 // View Task
 gulp.task('views', function() {
@@ -48,8 +54,8 @@ gulp.task('views', function() {
 });
 
 // Sass Task
-gulp.task('sass', function() {
-  return gulp.src(app.css + 'style.scss')
+gulp.task('sass', ['images'], function() {
+  return gulp.src(app.css + 'main.scss')
     .pipe(plumber())
     .pipe(sass.sync({
       outputStyle: 'compressed'
@@ -61,15 +67,16 @@ gulp.task('sass', function() {
     }));
 });
 
-// Uglify JS
-gulp.task('uglify', function(cb) {
-  pump([
-      gulp.src(app.js + '*.js'),
-      uglify(),
-      gulp.dest(build.js)
-    ],
-    cb
-  );
+// JS Task
+gulp.task('js', function() {
+  return gulp.src(app.js + '*.js')
+    .pipe(sourcemaps.init())
+    .pipe(babel({
+      presets: ['env']
+    }))
+    .pipe(concat('scripts.js'))
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest(build.js))
 });
 
 // Mail PHP
@@ -83,7 +90,6 @@ gulp.task('fontAssets', function() {
   return gulp.src(app.assets + 'fonts/*')
     .pipe(gulp.dest(build.fonts))
 })
-
 // CSS Assets
 gulp.task('cssAssets', function() {
   return gulp.src(app.assets + 'css/*.css')
@@ -91,19 +97,20 @@ gulp.task('cssAssets', function() {
     .pipe(concatCSS('assets.css'))
     .pipe(gulp.dest(build.css))
 });
-// JS Assets
-gulp.task('jsAssets', function(cb) {
-  pump([
-      gulp.src(app.assets + 'js/*.js'),
-      uglify(),
-      concat('assets.js'),
-      gulp.dest(build.js)
-    ],
-    cb
-  );
+// JS Task
+gulp.task('jsAssets', function() {
+  return gulp.src(app.assets + 'js/*.js')
+    .pipe(sourcemaps.init())
+    .pipe(babel({
+      presets: ['env']
+    }))
+    .pipe(concat('assets.js'))
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest(build.js))
 });
+
 // IMG Assets
-gulp.task('images', function(){
+gulp.task('images', ['cleanImgs'], function(){
   return gulp.src(app.assets + 'img/**/*')
     .pipe(imagemin([
       imagemin.gifsicle({interlaced: true}),
@@ -114,19 +121,29 @@ gulp.task('images', function(){
     .pipe(gulp.dest(build.img))
     .pipe(reload({ stream: true}));
 });
-
+// Clean Images
+gulp.task('cleanImgs', function() {
+  return gulp.src(build.img + 'img', {read: false})
+    .pipe(clean());
+});
 
 // Watchers
 gulp.task('watch_views', ['views'], reload);
 
+gulp.task('clean', function() {
+  return gulp.src(buildRoot)
+    .pipe(clean());
+});
+
 // Default task
-gulp.task('default', ['views', 'sass', 'uglify', 'mail', 'cssAssets', 'jsAssets', 'fontAssets', 'images'], function(){
+gulp.task('default', ['views', 'sass', 'js', 'mail', 'cssAssets', 'jsAssets', 'fontAssets'], function() {
+
   bs({server: buildRoot});
 
-  // Gulp watches
+  // Gulp Watchers
   gulp.watch(app.views + '**/*.pug', ['watch_views']);
   gulp.watch(app.css + '**/*.scss', ['sass']);
-  gulp.watch(app.js + '**/*.js', ['uglify']);
+  gulp.watch(app.js + '**/*.js', ['js']);
   gulp.watch(app.mail + '*.php', ['mail']);
   gulp.watch(app.assets + '**/*.css', ['cssAssets']);
   gulp.watch(app.assets + '**/*.js', ['jsAssets']);
